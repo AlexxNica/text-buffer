@@ -5,8 +5,6 @@ _ = require 'underscore-plus'
 fs = require 'fs-plus'
 path = require 'path'
 crypto = require 'crypto'
-iconv = require 'iconv-lite'
-jschardet = require 'jschardet'
 {BufferOffsetIndex, Patch} = require 'superstring'
 Point = require './point'
 Range = require './range'
@@ -405,15 +403,7 @@ class TextBuffer
 
   # Public: Returns the {String} detected encoding of this buffer,
   # or undefined if the encoding was unable to be detected.
-  detectEncoding: ->
-    filePath = @getPath()
-    return unless fs.existsSync(filePath)
-
-    buffer = fs.readFileSync(filePath)
-    {encoding} = jschardet.detect(buffer)
-    encoding = 'utf8' if encoding is 'ascii'
-    return unless iconv.encodingExists(encoding)
-    return encoding.toLowerCase().replace(/[^0-9a-z]|:\d{4}$/g, '')
+  detectEncoding: -> @file?.detectEncoding()
 
   setPreferredLineEnding: (preferredLineEnding=null) ->
     @preferredLineEnding = preferredLineEnding
